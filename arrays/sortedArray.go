@@ -178,6 +178,7 @@ func merge(left, right []int) (result []int) {
 		result[i] = left[j]
 		i++
 	}
+
 	for j := 0; j < len(right); j++ {
 		result[i] = right[j]
 		i++
@@ -188,4 +189,68 @@ func merge(left, right []int) (result []int) {
 
 func (arr *SortedArray)HybridSort(){
 	
+}
+
+func (arr *SortedArray)InsertionRecursiveMergeSort(left int, right int) {
+	// If <= OPTIMIZED use insertion sort subroutine
+	if right <= left + 25 - 1 {
+		insertionSort(arr, left, right)
+	} else {
+		mid := left + (right - left) / 2
+		arr.InsertionRecursiveMergeSort(left, mid)
+		arr.InsertionRecursiveMergeSort(mid + 1, right)
+		mergeSort(arr, left, mid, right)
+	}
+}
+
+func insertionSort(arr *SortedArray, left int, right int){
+	for i := left + 1; i <= right; i++ {
+		key := (*arr)[i]
+		j := i - 1
+
+		for j >= left && (*arr)[j] > key {
+			(*arr)[j + 1] = (*arr)[j]
+			j--
+		}
+		(*arr)[j + 1] = key
+	}
+}
+
+func mergeSort(arr *SortedArray, left int, mid int, right int) {
+	i := 0
+	j := 0
+	k := left
+
+	// Sizes of the temporary arrays to be copied
+	n1 := (mid - left) + 1
+	n2 := (right - mid)
+
+	// Create temporary arrays and copy data
+	leftTemp := (*arr)[left: mid + 1]
+	rightTemp := (*arr)[mid + 1: right + 1]
+
+	// Merge the temp arrays back into arr[left...right]
+	for i < n1 && j < n2 {
+		if leftTemp[i] <= rightTemp[j] {
+			(*arr)[k] = leftTemp[i]
+			k++
+			i++
+		} else {
+			(*arr)[k] = rightTemp[j]
+			k++
+			j++
+		}
+	}
+
+	// Copy remaining elements, if any
+	for i < n1 {
+		(*arr)[k] = leftTemp[i]
+		k++
+		i++
+	}
+	for j < n2 {
+		(*arr)[k] = rightTemp[j]
+		k++
+		j++
+	}
 }
